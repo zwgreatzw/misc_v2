@@ -1,0 +1,25 @@
+清理防火墙
+sudo iptables -P INPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo iptables -P OUTPUT ACCEPT
+sudo iptables -F
+sudo iptables -X
+sudo apt-get install iptables-persistent -y
+sudo netfilter-persistent save
+
+更新系统
+sudo apt update && sudo apt upgrade -y
+
+开启 BBR 加速
+echo "net.core.default_qdisc=fq" | sudo tee -a /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+
+调大网络缓冲区
+echo "net.core.rmem_max=26214400" | sudo tee -a /etc/sysctl.conf
+echo "net.core.wmem_max=26214400" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+
+解除系统最大连接限制
+echo "* soft nofile 1048576" | sudo tee -a /etc/security/limits.conf
+echo "* hard nofile 1048576" | sudo tee -a /etc/security/limits.conf
